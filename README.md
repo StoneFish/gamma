@@ -1,0 +1,4 @@
+gamma
+=====
+
+component of mobile
