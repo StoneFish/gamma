@@ -1,0 +1,79 @@
+<html lang="en">
+<html>
+<head>
+    <title>gamma</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no" />
+    <link rel='stylesheet' type='text/css' href='./css/gamma.css'/>
+    <script src="http://cdn.staticfile.org/jquery/1.7.2/jquery.min.js"></script>
+    <script src="./js/gamma.js"></script>
+    <style type="text/css"></style>
+</head>
+</head>
+<body class="root-view">
+	
+</body>
+</html>
+<script>
+	Gamma.init();
+	
+	var restore = function(){
+		Gamma.context.rootView.empty();
+		var dashBoard = $('<h1><a href="javascript:showTab();">show tab<a></h1>' +
+						  '<h1><a href="javascript:showNavigator();">show navigator<a></h1>' +
+						  '<h1><a href="javascript:showModal();">show modal<a></h1>');
+		Gamma.context.rootView.append(dashBoard);
+	}
+	
+	var showTab = function(){
+		Gamma.context.rootView.empty();
+		var items = [{title:'tab-a',active:'on',nomal:'tab-a',viewCtrl:demoViewCtrl},
+				 {title:'tab-b',active:'on',nomal:'tab-b',viewCtrl:function(){return {view:$('<h1>tab2</h1>')};}},
+				 {title:'tab-c',active:'on',nomal:'tab-c',viewCtrl:function(){return {view:$('<h1>tab3</h1>')};}},
+				 {title:'tab-d',active:'on',nomal:'tab-d',viewCtrl:function(){return {view:$('<h1>tab4</h1>')};}}];
+				 
+	    var tabViewCtrl = Gamma.loadTabViewCtrl(items);	
+	    Gamma.context.rootView.append(tabViewCtrl.view);
+	}
+	
+	var showNavigator = function(){
+		Gamma.context.rootView.empty();
+		var navigator = Gamma.loadNavigator([demoViewCtrl(1),demoViewCtrl(2)]);
+		Gamma.context.navigator = navigator;
+		Gamma.context.rootView.append(navigator.view);
+	}
+	
+	var showModal = function(){
+		Gamma.modal(Gamma.context.rootView,demoModalViewCtrl)
+	}
+	
+	var demoViewCtrl = function(title){
+		var view = $('<div><h1>demoViewCtrl ' + title + '</h1></div>');
+					 
+		var restoreBtn = $('<h1><a href="javascript:restore();">restore</a><h1>');
+		
+		var pushBtn = $('<h1><a href="javascript:(0);">push</a><h1>').unbind().click(function(){
+			Gamma.context.navigator.pushViewCtrl(demoViewCtrl(title + 1));
+		});
+
+		var backBtn = $('<h1><a href="javascript:(0);">back</a><h1>').unbind().click(function(){
+			Gamma.context.navigator.back();
+		});
+	   	
+		view.append(restoreBtn);
+		view.append(pushBtn);
+		view.append(backBtn);
+			
+		return {view:view};
+	}
+	
+	var demoModalViewCtrl = function(dismiss){
+		var view = $('<div><h1>demoModalViewCtrl</h1></div>');
+		var dissmissBtn = $('<h1><a href="javascript:(0);">dismiss</a><h1>').unbind().click(dismiss);
+		view.append(dissmissBtn);
+		return {view:view};
+	}
+		
+	restore();
+</script>
