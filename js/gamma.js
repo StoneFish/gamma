@@ -30,15 +30,7 @@
     
 	/*
 	tab
-	example; run script below in console;
-	
-	Gamma.context.rootView.empty();
-	var items = [{title:'tab-a',active:'on',nomal:'tab-a',viewCtrl:function(){return {view:$('<div>tab1</div>')};}},
-				 {title:'tab-b',active:'on',nomal:'tab-b',viewCtrl:function(){return {view:$('<div>tab2</div>')};}},
-				 {title:'tab-c',active:'on',nomal:'tab-c',viewCtrl:function(){return {view:$('<div>tab3</div>')};}},
-				 {title:'tab-d',active:'on',nomal:'tab-d',viewCtrl:function(){return {view:$('<div>tab4</div>')};}}];
-	var tabViewCtrl = Gamma.loadTabViewCtrl(items);
-	Gamma.context.rootView.append(tabViewCtrl.view);
+	example; see index.html
 	
 	*/
     this.TabViewCtrl = function(items){ 
