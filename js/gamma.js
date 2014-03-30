@@ -41,7 +41,7 @@
 	Gamma.context.rootView.append(tabViewCtrl.view);
 	
 	*/
-    this.loadTabViewCtrl = function(items){ 
+    this.TabViewCtrl = function(items){ 
 
         var view = $('<div class="tab-content"></div>');
         var emptyView = $('<div>*_* view is disappeared</div>');
@@ -52,12 +52,12 @@
             var itemView = tabbarView.children()[index]    
             var item = items[index];
             $(itemView).addClass(item.active).siblings("li").removeClass(item.active);
-            var viewCtrl = item.viewCtrl?item.viewCtrl():{view:emptyView};
+            var viewCtrl = item.viewCtrl ? item.viewCtrl : {view:emptyView};
             contentView.empty();
             contentView.append(viewCtrl.view);
         }
         
-        var draw = function(){
+        var loadView = function(){
             var renderItemView = function(item){
                 var tabbarItemView = $('<li>--</li>');
                 tabbarItemView.addClass(item.nomal).text(item.title).bind('click',function(){
@@ -74,17 +74,18 @@
             view.show();
         }
       
-        draw();
+        loadView();
         selectIndex(0);
-        //return controller interfaces
-        return {view:view,selectIndex:selectIndex};
+
+        this.view = view;
+	this.selectIndex = selectIndex;
     }
     
 	/*
 	navigator
 	example; see index.html
 	*/
-    this.loadNavigator = function(viewCtrls){
+    this.Navigator = function(viewCtrls){
         var viewCtrlStack = [];
         var view = $('<div></div>');
         var topViewCtrl;
@@ -111,24 +112,26 @@
 	   	    pushViewCtrl(viewCtrl);
 		}); 
         
-        
-        return {view:view,pushViewCtrl:pushViewCtrl,back:back};
+        this.view = view;
+	this.pushViewCtrl = pushViewCtrl;
+        this.back = back;
     }
     
 	/*
 	modal
 	example; see index.html
 	*/
-    this.modal = function(baseView,createViewCtrl){
-        var viewCtrl;
+    this.modal = function(baseView,viewCtrl){
+
         var dismiss = function(){
             if(viewCtrl == undefined)
                 return;
             viewCtrl.view.remove();
             baseView.show();
         }
-        
-        viewCtrl = createViewCtrl(dismiss);
+
+        viewCtrl.bindDismiss(dismiss);
+
         baseView.hide();
         baseView.after(viewCtrl.view);
     }
@@ -138,18 +141,45 @@
 
 //tableView
 (function(){
-    this.loadTableView = function(model,loadCellView){
+
+    this.TableView = function(delegate,datasource){
         var view =  $('<div class="warp"></div>');
         
-        model.load(function(list){
-            list.forEach(function(val,index){
-                var tableCellView = loadCellView(val,index);
+	var loadView = function(){
+	    view.empty();
+	    
+	    datasource.list.forEach(function(val,index){
+                var tableCellView = delegate.loadCellView(val,index);
                 view.append(tableCellView);
             }); 
-        });
+	}
         
-        return view;
+        this.view = view;
+	this.loadView = loadView;
     }
+
+   this.TableViewCtrl = function(){
+       var delegate,datasource;
+       
+       delegate = {
+	   loadCellView : function(val,index){
+	       return $('<div>'+ val +'</div>');
+	   }
+       };
+
+       datasource = {
+	   list : []
+       };
+       
+       var tableView = new Gamma.TableView(delegate,datasource);
+       
+       this.delegate = delegate;
+       this.datasource = datasource;
+       this.view = tableView.view;
+       this.loadView = function(){
+	   tableView.loadView();
+       }
+   }
 
 }).call(Gamma);
 

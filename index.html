@@ -19,60 +19,60 @@
 	Gamma.init();
 	
 	var restore = function(){
-		Gamma.context.rootView.empty();
-		var dashBoard = $('<h1><a href="javascript:showTab();">show tab<a></h1>' +
-						  '<h1><a href="javascript:showNavigator();">show navigator<a></h1>' +
-						  '<h1><a href="javascript:showModal();">show modal<a></h1>');
-		Gamma.context.rootView.append(dashBoard);
+	    Gamma.context.rootView.empty();
+	    var dashBoard = $('<h1><a href="javascript:showTab();">show tab<a></h1>' +
+	                    '<h1><a href="javascript:showNavigator();">show navigator<a></h1>' +
+	                    '<h1><a href="javascript:showModal();">show modal<a></h1>');
+	    Gamma.context.rootView.append(dashBoard);
 	}
 	
 	var showTab = function(){
 		Gamma.context.rootView.empty();
-		var items = [{title:'tab-a',active:'on',nomal:'tab-a',viewCtrl:demoViewCtrl},
-				 {title:'tab-b',active:'on',nomal:'tab-b',viewCtrl:function(){return {view:$('<h1>tab2</h1>')};}},
-				 {title:'tab-c',active:'on',nomal:'tab-c',viewCtrl:function(){return {view:$('<h1>tab3</h1>')};}},
-				 {title:'tab-d',active:'on',nomal:'tab-d',viewCtrl:function(){return {view:$('<h1>tab4</h1>')};}}];
+		var items = [{title:'tab-a',active:'on',nomal:'tab-a',viewCtrl:new DemoViewCtrl('tab1')},
+	                     {title:'tab-b',active:'on',nomal:'tab-b',viewCtrl:new DemoViewCtrl('tab2')},
+		             {title:'tab-c',active:'on',nomal:'tab-c',viewCtrl:new DemoViewCtrl('tab3')},
+		             {title:'tab-d',active:'on',nomal:'tab-d',viewCtrl:new DemoViewCtrl('tab4')}];
 				 
-	    var tabViewCtrl = Gamma.loadTabViewCtrl(items);	
+	    var tabViewCtrl = new Gamma.TabViewCtrl(items);	
 	    Gamma.context.rootView.append(tabViewCtrl.view);
 	}
 	
 	var showNavigator = function(){
 		Gamma.context.rootView.empty();
-		var navigator = Gamma.loadNavigator([demoViewCtrl(1),demoViewCtrl(2)]);
+		var navigator = new Gamma.Navigator([new DemoViewCtrl(1),new DemoViewCtrl(2)]);
 		Gamma.context.navigator = navigator;
 		Gamma.context.rootView.append(navigator.view);
 	}
 	
 	var showModal = function(){
-		Gamma.modal(Gamma.context.rootView,demoModalViewCtrl)
+		Gamma.modal(Gamma.context.rootView,new DemoModalViewCtrl());
 	}
 	
-	var demoViewCtrl = function(title){
-		var view = $('<div><h1>demoViewCtrl ' + title + '</h1></div>');
+	var DemoViewCtrl = function(title){
+		this.view = $('<div><h1>demoViewCtrl ' + title + '</h1></div>');
 					 
 		var restoreBtn = $('<h1><a href="javascript:restore();">restore</a><h1>');
 		
 		var pushBtn = $('<h1><a href="javascript:(0);">push</a><h1>').unbind().click(function(){
-			Gamma.context.navigator.pushViewCtrl(demoViewCtrl(title + 1));
+			Gamma.context.navigator.pushViewCtrl(new DemoViewCtrl(title + 1));
 		});
 
 		var backBtn = $('<h1><a href="javascript:(0);">back</a><h1>').unbind().click(function(){
 			Gamma.context.navigator.back();
 		});
 	   	
-		view.append(restoreBtn);
-		view.append(pushBtn);
-		view.append(backBtn);
-			
-		return {view:view};
+		this.view.append(restoreBtn);
+		this.view.append(pushBtn);
+		this.view.append(backBtn);
 	}
 	
-	var demoModalViewCtrl = function(dismiss){
-		var view = $('<div><h1>demoModalViewCtrl</h1></div>');
-		var dissmissBtn = $('<h1><a href="javascript:(0);">dismiss</a><h1>').unbind().click(dismiss);
-		view.append(dissmissBtn);
-		return {view:view};
+        var DemoModalViewCtrl = function(){
+	      var view = $('<div><h1>demoModalViewCtrl</h1></div>');
+	      this.bindDismiss = function(dismiss){
+	           var dissmissBtn = $('<h1><a href="javascript:(0);">dismiss</a><h1>').unbind().click(dismiss);
+	           view.append(dissmissBtn);
+	      }
+              this.view = view;
 	}
 		
 	restore();
